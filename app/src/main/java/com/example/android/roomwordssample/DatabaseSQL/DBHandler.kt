@@ -2,6 +2,7 @@ package com.example.android.roomwordssample.DatabaseSQL
 
 import android.content.ContentValues
 import android.content.Context
+import android.content.SearchRecentSuggestionsProvider
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -20,14 +21,18 @@ class DBHandler(context : Context, name : String? , factory : SQLiteDatabase.Cur
         val WORD_TABLE_NAME     = "WORD"
         val COLUMN_WORDID       = "WORDID"
         val COLUMN_WORDNAME     = "WORDNAME"
-//        val COLUMN_MAXCREDIT        = "MAXCREDIT"
+        val COLUMN_CHECKIN      = "CHECKIN"
+        val COLUMN_CHECKOUT     = "CHECKOUT"
+
     }
 
     //สร้าง ตารางของ DATABASE
     override fun onCreate(db: SQLiteDatabase?) {
         val CREATE_WORD_TABLE  = ("CREATE TABLE $WORD_TABLE_NAME ("+
                 "$COLUMN_WORDID INTEGER PRIMARY KEY AUTOINCREMENT,"+
-                "$COLUMN_WORDNAME TEXT)")
+                "$COLUMN_WORDNAME TEXT,"+
+                "$COLUMN_CHECKIN BOOLEAN,"+
+                "$COLUMN_CHECKOUT TEXT)")
         db?.execSQL(CREATE_WORD_TABLE)
     }
 
@@ -52,6 +57,7 @@ class DBHandler(context : Context, name : String? , factory : SQLiteDatabase.Cur
                 val word = Word()
                 word.wordID = cursor.getInt(cursor.getColumnIndex(COLUMN_WORDID))
                 word.wordName = cursor.getString(cursor.getColumnIndex(COLUMN_WORDNAME))
+                word.checkinName = cursor.getString(cursor.getColumnIndex(COLUMN_CHECKIN))
                 words.add(word)
                 cursor.moveToNext()
             }
@@ -68,10 +74,12 @@ class DBHandler(context : Context, name : String? , factory : SQLiteDatabase.Cur
 
         val values = ContentValues()
         values.put(COLUMN_WORDNAME,word.wordName)
+ //       values.put(COLUMN_CHECKIN,word.checkinName)
         val db = this.writableDatabase
+
         try {
             db.insert(WORD_TABLE_NAME,null,values)
-//            db.rawQuery("Insert Into $WORD_TABLE_NAME($COLUMN_WORDNAME) Values(?)")
+   //         db.rawQuery("Insert Into $WORD_TABLE_NAME($COLUMN_WORDNAME) Values(?)")
             Toast.makeText(mCtx,"Word Add",Toast.LENGTH_SHORT).show()
         }
         catch (e : Exception){
@@ -97,8 +105,20 @@ class DBHandler(context : Context, name : String? , factory : SQLiteDatabase.Cur
     }
 
 
-    fun updateWord(  ){
-        
+    fun checkout( id : String , wordName : String ): Boolean {
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        var reslut : Boolean = false
+        contentValues.put(COLUMN_WORDNAME,wordName)
+        try {
+            db.update(WORD_TABLE_NAME,contentValues,"$COLUMN_WORDID = ?", arrayOf(id))
+            reslut = true
+        }
+        catch (e:Exception){
+            reslut = false
+        }
+        Log.e(ContentValues.TAG,"Error Updating")
+     return reslut
     }
 
 }

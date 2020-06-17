@@ -20,8 +20,10 @@ class WordAdapter(mCtx : Context , val words :ArrayList<Word>) : RecyclerView.Ad
     //กำหนดค่า layout ที่ต้องารแสดง เช่น ScanResult
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var scanword = itemView.txtscan_resulut
-        val updatebutton = itemView.btnupdate
+        var status = itemView.txtstatus
+        val checkoutbutton = itemView.btnucheckout
         val deletebutton = itemView.btndelete
+
 
     }
 
@@ -39,6 +41,7 @@ class WordAdapter(mCtx : Context , val words :ArrayList<Word>) : RecyclerView.Ad
     override fun onBindViewHolder(p0: WordAdapter.ViewHolder, p1: Int) {
         val word : Word = words[p1]
         p0.scanword.text = word.wordName
+        p0.status.text =word.checkinName
 
         p0.deletebutton.setOnClickListener {
             val word_delete = word.wordName
@@ -65,9 +68,15 @@ class WordAdapter(mCtx : Context , val words :ArrayList<Word>) : RecyclerView.Ad
 
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setBackgroundColor(Color.WHITE)
             alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.GREEN)
-//           alertDialog.getButton(AlertDialog.BUTTON_POSITIVE).setPadding(20)
             alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setBackgroundColor(Color.WHITE)
             alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(Color.RED)
         }
+
+
+//        p0.checkoutbutton.setOnClickListener {
+//            val inflater = LayoutInflater.from(mCtx)
+//
+//        }
+
     }
 }
